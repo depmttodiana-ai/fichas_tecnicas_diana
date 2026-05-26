@@ -1,9 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 
 from app.core.config import settings
-from app.core.db import create_db_and_tables
+from app.core.db import run_migrations
 from app.core.storage import configure_storage
 
 
@@ -30,14 +29,6 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    # ── Servir archivos locales ─────────────────────
-    if settings.STORAGE_MODE == "local":
-        app.mount(
-            "/uploads",
-            StaticFiles(directory=settings.LOCAL_UPLOAD_DIR),
-            name="uploads",
-        )
-
     # ── Registrar rutas ─────────────────────────────
     from app.api.router import api_router
 
@@ -49,7 +40,7 @@ def create_app() -> FastAPI:
     # ── Startup ─────────────────────────────────────
     @app.on_event("startup")
     def on_startup():
-        create_db_and_tables()
+        run_migrations()
         configure_storage()
 
     # ── Health check ────────────────────────────────

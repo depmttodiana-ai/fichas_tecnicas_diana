@@ -27,7 +27,8 @@ class Settings(BaseSettings):
     CLOUDINARY_API_SECRET: str = ""
 
     # ── Storage ─────────────────────────────────────
-    STORAGE_MODE: str = "local"
+    # En Vercel SIEMPRE debe ser cloudinary
+    STORAGE_MODE: str = "cloudinary"
     LOCAL_UPLOAD_DIR: str = "uploads"
 
     # ── URL base para QR codes ──────────────────────
