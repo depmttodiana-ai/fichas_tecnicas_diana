@@ -31,6 +31,7 @@ class Mantenimiento(SQLModel, table=True):
     titulo: str = Field(max_length=200)
     descripcion: Optional[str] = Field(default=None)
     trabajo_realizado: Optional[str] = Field(default=None)
+    realizado_por: Optional[str] = Field(default=None, max_length=100)
 
     # Estado
     estado: EstadoMantenimientoEnum = Field(

@@ -40,3 +40,4 @@ class ClasificacionList(BaseModel):
 
     id: uuid.UUID
     nombre: str
+    descripcion: Optional[str] = None

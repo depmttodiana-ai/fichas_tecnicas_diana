@@ -50,3 +50,4 @@ class AreaList(BaseModel):
     id: uuid.UUID
     nombre: str
     codigo: Optional[str] = None
+    descripcion: Optional[str] = None

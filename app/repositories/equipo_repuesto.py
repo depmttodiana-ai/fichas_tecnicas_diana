@@ -37,6 +37,12 @@ class EquipoRepuestoRepository:
         )
         return list(self.session.exec(statement).all())
 
+    def get_all(
+        self,
+    ) -> List[EquipoRepuesto]:
+        statement = select(EquipoRepuesto).order_by(EquipoRepuesto.descripcion)
+        return list(self.session.exec(statement).all())
+
     def delete(self, repuesto: EquipoRepuesto) -> None:
         self.session.delete(repuesto)
         self.session.flush()

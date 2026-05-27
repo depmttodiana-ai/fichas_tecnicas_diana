@@ -40,6 +40,7 @@ class MantenimientoCreate(BaseModel):
     titulo: str = Field(min_length=1, max_length=200)
     descripcion: Optional[str] = None
     trabajo_realizado: Optional[str] = None
+    realizado_por: Optional[str] = Field(default=None, max_length=100)
     estado: EstadoMantenimientoEnum = (
         EstadoMantenimientoEnum.REALIZADO
     )
@@ -73,6 +74,7 @@ class MantenimientoRead(BaseModel):
     titulo: str
     descripcion: Optional[str] = None
     trabajo_realizado: Optional[str] = None
+    realizado_por: Optional[str] = None
     estado: EstadoMantenimientoEnum
     fecha: date
     created_at: datetime
@@ -96,3 +98,5 @@ class MantenimientoList(BaseModel):
     estado: EstadoMantenimientoEnum
     nombre_equipo: Optional[str] = None
     codigo_equipo: Optional[str] = None
+    nombre_usuario: Optional[str] = None
+    realizado_por: Optional[str] = None

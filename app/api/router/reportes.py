@@ -11,11 +11,15 @@ from app.core.config import settings
 from app.services.reporte_pdf import (
     generar_ficha_equipo_pdf,
     generar_historial_mantenimiento_pdf,
+    generar_listado_equipos_pdf,
+    generar_listado_mantenimientos_pdf,
+    generar_catalogo_repuestos_pdf,
 )
 from app.services.reporte_excel import (
     generar_excel_equipos,
     generar_excel_mantenimientos,
     generar_excel_repuestos,
+    generar_ficha_equipo_excel,
 )
 from app.services.reporte_qr import (
     generar_qr_equipo,
@@ -483,6 +487,33 @@ def ficha_equipo_pdf(
     )
 
 
+# ── EXCEL: Ficha técnica individual ─────────────────
+
+@router.get("/equipo/{equipo_id}/excel")
+def ficha_equipo_excel(
+    equipo_id: uuid.UUID,
+    session: SessionDep,
+    user: CurrentUser,
+):
+    try:
+        buffer = generar_ficha_equipo_excel(session, equipo_id)
+    except ValueError as e:
+        raise HTTPException(404, str(e))
+
+    return StreamingResponse(
+        buffer,
+        media_type=(
+            "application/vnd.openxmlformats-officedocument"
+            ".spreadsheetml.sheet"
+        ),
+        headers={
+            "Content-Disposition": (
+                f'attachment; filename="ficha_{equipo_id}.xlsx"'
+            ),
+        },
+    )
+
+
 # ── PDF: Historial de mantenimiento ─────────────────
 
 @router.get("/equipo/{equipo_id}/mantenimientos/pdf")
@@ -504,6 +535,81 @@ def historial_mantenimiento_pdf(
         headers={
             "Content-Disposition": (
                 f'attachment; filename="mantenimientos_{equipo_id}.pdf"'
+            ),
+        },
+    )
+
+
+# ── PDF: Listado de equipos ─────────────────────────
+
+@router.get("/equipos/pdf")
+def equipos_listado_pdf(
+    session: SessionDep,
+    user: CurrentUser,
+    area_id: Optional[uuid.UUID] = Query(default=None),
+    clasificacion_id: Optional[uuid.UUID] = Query(default=None),
+    estado: Optional[str] = Query(default=None),
+    nivel: Optional[int] = Query(default=None, ge=1),
+):
+    buffer = generar_listado_equipos_pdf(
+        session,
+        area_id=area_id,
+        clasificacion_id=clasificacion_id,
+        estado=estado,
+        nivel=nivel,
+    )
+    return StreamingResponse(
+        buffer,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": (
+                'attachment; filename="listado_equipos.pdf"'
+            ),
+        },
+    )
+
+
+# ── PDF: Listado de mantenimientos ──────────────────
+
+@router.get("/mantenimientos/pdf")
+def mantenimientos_listado_pdf(
+    session: SessionDep,
+    user: CurrentUser,
+    equipo_id: Optional[uuid.UUID] = Query(default=None),
+    fecha_desde: Optional[date] = Query(default=None),
+    fecha_hasta: Optional[date] = Query(default=None),
+):
+    buffer = generar_listado_mantenimientos_pdf(
+        session,
+        equipo_id=equipo_id,
+        fecha_desde=fecha_desde,
+        fecha_hasta=fecha_hasta,
+    )
+    return StreamingResponse(
+        buffer,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": (
+                'attachment; filename="listado_mantenimientos.pdf"'
+            ),
+        },
+    )
+
+
+# ── PDF: Catálogo de repuestos ──────────────────────
+
+@router.get("/repuestos/pdf")
+def repuestos_catalogo_pdf(
+    session: SessionDep,
+    user: CurrentUser,
+):
+    buffer = generar_catalogo_repuestos_pdf(session)
+    return StreamingResponse(
+        buffer,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": (
+                'attachment; filename="catalogo_repuestos.pdf"'
             ),
         },
     )

@@ -62,6 +62,7 @@ class MantenimientoService:
             titulo=body.titulo,
             descripcion=body.descripcion,
             trabajo_realizado=body.trabajo_realizado,
+            realizado_por=body.realizado_por,
             estado=body.estado,
             fecha=body.fecha,
         )
@@ -251,6 +252,7 @@ class MantenimientoService:
             titulo=mantto.titulo,
             descripcion=mantto.descripcion,
             trabajo_realizado=mantto.trabajo_realizado,
+            realizado_por=mantto.realizado_por,
             estado=mantto.estado,
             fecha=mantto.fecha,
             created_at=mantto.created_at,
@@ -270,6 +272,11 @@ class MantenimientoService:
         nombre_equipo = equipo.nombre if equipo else None
         codigo_equipo = equipo.codigo_equipo if equipo else None
 
+        nombre_usuario = None
+        if mantto.usuario_id:
+            usuario = self.usuario_repo.get_by_id(mantto.usuario_id)
+            nombre_usuario = usuario.nombre if usuario else None
+
         return MantenimientoList(
             id=mantto.id,
             fecha=mantto.fecha,
@@ -278,6 +285,8 @@ class MantenimientoService:
             estado=mantto.estado,
             nombre_equipo=nombre_equipo,
             codigo_equipo=codigo_equipo,
+            nombre_usuario=nombre_usuario,
+            realizado_por=mantto.realizado_por,
         )
 
     def get_repuestos_necesarios_para_equipo(
