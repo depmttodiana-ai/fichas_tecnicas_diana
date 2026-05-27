@@ -9,9 +9,16 @@ wheels/
 # Virtual environments
 .venv
 *.db
-.env
 
+# Variables de entorno (NUNCA subir)
+.env
+.env.*
+**/.env
+**/.env.*
+
+# Docker
+Dockerfile
 .dockerignore
-Dokerfile
-*.yml
-*.yaml
+
+# Excepción: sí subir docker-compose
+!docker-compose.yml
